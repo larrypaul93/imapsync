@@ -1021,7 +1021,9 @@ use Sys::MemInfo ;
 use Regexp::Common ;
 use Text::ParseWords ; # for quotewords()
 use File::Tail ;
-
+# use LWP::UserAgent ;
+# use IO::Socket::SSL;
+use IO::Socket::Socks::Wrapper 'wrap_connection';
 
 
 local $OUTPUT_AUTOFLUSH = 1 ;
@@ -8520,7 +8522,14 @@ sub init_imap
 
         my ( $imap ) ;
 
-        $imap = Mail::IMAPClient->new() ;
+        
+
+        $imap = wrap_connection(Mail::IMAPClient->new(),{
+                    ProxyAddr  => 'geo.iproyal.com',
+                    ProxyPort  => '32325',
+                    ProxyUser  => 'iproyal15202',
+                    ProxyPass  => 'Pb86ljiH_streaming-1',
+        }) ;
 
         # Well, it does not change anything, does it?
         # It does when suppressing the hack with *STDERR
