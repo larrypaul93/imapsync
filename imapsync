@@ -8527,8 +8527,8 @@ sub init_imap
         $imap = wrap_connection(Mail::IMAPClient->new(),{
                     ProxyAddr  => 'geo.iproyal.com',
                     ProxyPort  => '32325',
-                    ProxyUser  => 'iproyal15202',
-                    ProxyPass  => 'Pb86ljiH_streaming-1',
+                #     ProxyUser  => 'iproyal15202',
+                #     ProxyPass  => 'Pb86ljiH_streaming-1',
         }) ;
 
         # Well, it does not change anything, does it?
