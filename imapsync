@@ -21099,6 +21099,8 @@ sub get_options_cgi
         'abortbyfile'      => \$mysync->{ abortbyfile },
         'host1=s'          => \$mysync->{ host1 },
         'host2=s'          => \$mysync->{ host2 },
+        'proxy1=s'         => \$mysync->{ acc1 }->{ proxy },
+        'proxy2=s'         => \$mysync->{ acc2 }->{ proxy },
         'user1=s'          => \$mysync->{ user1 },
         'user2=s'          => \$mysync->{ user2 },
         'password1=s'      => \$mysync->{ password1 },
