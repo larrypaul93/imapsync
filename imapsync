@@ -1021,6 +1021,7 @@ use Sys::MemInfo ;
 use Regexp::Common ;
 use Text::ParseWords ; # for quotewords()
 use File::Tail ;
+use HTTP::Tiny;
 # use LWP::UserAgent ;
 # use IO::Socket::SSL;
 use IO::Socket::Socks::Wrapper 'wrap_connection';
@@ -8445,14 +8446,16 @@ sub login_imap
         myprint( "$acc->{ Side }: connecting and login on $side [$host] port [$port] with user [$user]\n"  ) ;
 
         my $imap = init_imap( @allargs ) ;
-
-        if ( ! $imap->connect() )
-        {
-                my $error = "$acc->{ Side } failure: can not open imap connection on $side [$host] with user [$user]: "
-                            . $imap->LastError . " $OS_ERROR\n" ;
-                errors_incr( $mysync, $error ) ;
-                return ;
+        if(! $acc->{proxy}){
+                if ( ! $imap->connect() )
+                {
+                        my $error = "$acc->{ Side } failure: can not open imap connection on $side [$host] with user [$user]: "
+                                . $imap->LastError . " $OS_ERROR\n" ;
+                        errors_incr( $mysync, $error ) ;
+                        return ;
+                }
         }
+        
         
         # Add also $imap->Socket->sockhost() to help configuring firewalls, allowed rule.
         myprint( "$acc->{ Side } IP address: ", $imap->Socket->peerhost(), " Local IP address: ", $imap->Socket->sockhost(), "\n"  ) ;
@@ -8523,6 +8526,7 @@ sub init_imap
         my ( $imap ) ;
 
         if($acc->{proxy}){
+                myprint( "connecting to proxy: $acc->{proxy} for $host:$port\n" );
                 my $http = HTTP::Tiny->new( 
                         https_proxy => $acc->{proxy}
                 );
@@ -8536,8 +8540,9 @@ sub init_imap
                         headers   => {},
                 };
                 my $handle = $http->_open_handle($request, "https", $host, $port, $host) or  errors_incr( $mysync, "Proxy connection failed" ) ;;
-
+                myprint( "connecting to proxy: $acc->{proxy} for $host:$port\n" );
                 $imap = Mail::IMAPClient->new(Socket => $handle->{fh},) ;
+
         }
         else {
                 $imap = Mail::IMAPClient->new() ;
@@ -8548,11 +8553,14 @@ sub init_imap
         # It does when suppressing the hack with *STDERR
         $imap->Debug_fh( $mysync->{ tee } || *STDOUT ) ;
 
-        # if ( $ssl ) { set_ssl( $imap, $acc ) }
+        if ( $ssl ) { set_ssl( $imap, $acc ) }
         if ( $tls ) {  } # can not do set_tls() here because connect() will directly do a STARTTLS
         $imap->Clear( 1 ) ;
-        $imap->Server( $host ) ;
-        $imap->Port( $port ) ;
+        if(!$acc->{proxy}) {
+                $imap->Server( $host ) ;
+                $imap->Port( $port ) ;
+        }
+        
         $imap->Fast_io( $acc->{ fastio } ) ;
         $imap->Buffer( $buffersize || $DEFAULT_BUFFER_SIZE ) ;
         $imap->Uid( $uid ) ;
