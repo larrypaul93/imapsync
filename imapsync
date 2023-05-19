@@ -20951,8 +20951,6 @@ sub get_options_from_string
         'debugsleep=f'  => \$mysync->{ debugsleep },
         'errorsmax=i'   => \$mysync->{ errorsmax },
         'folder=s@'     => \$mysync->{ folder  },
-        'proxy1=s@'     => \$mysync->{ acc1 }->{ proxy },
-        'proxy2=s@'     => \$mysync->{ acc2 }->{ proxy },
         'timeout=f'     => \$mysync->{ timeout },
         'timeout1=f'    => \$mysync->{ acc1 }->{ timeout },
         'timeout2=f'    => \$mysync->{ acc2 }->{ timeout },
@@ -21210,6 +21208,8 @@ sub get_options_cmd
 
         'host1=s'       => \$mysync->{ host1 },
         'host2=s'       => \$mysync->{ host2 },
+        'proxy1=s'     => \$mysync->{ acc1 }->{ proxy },
+        'proxy2=s'     => \$mysync->{ acc2 }->{ proxy },
         'port1=i'       => \$mysync->{ port1 },
         'port2=i'       => \$mysync->{ port2 },
         'inet4|ipv4'    => \$mysync->{ inet4 },
