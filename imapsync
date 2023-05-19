@@ -8522,21 +8522,33 @@ sub init_imap
 
         my ( $imap ) ;
 
-        
+        if($acc->{proxy}){
+                my $http = HTTP::Tiny->new( 
+                        https_proxy => $acc->{proxy}
+                );
+                my $request = {
+                        method    => "get",
+                        scheme    => "https",
+                        host      => $host,
+                        port      => $port,
+                        host_port => "$host:$port",
+                        uri       => "/",
+                        headers   => {},
+                };
+                my $handle = $http->_open_handle($request, "https", $host, $port, $host) or  errors_incr( $mysync, "Proxy connection failed" ) ;;
 
-        $imap = wrap_connection(Mail::IMAPClient->new(),{
-                ProxyAddr  => '45.154.5.179',
-                ProxyPort  => '12324',
-                ProxyUser  => '14aa4b8392ef5',
-                ProxyPass  => '493020b9a5'
-                
-        }) ;
+                $imap = Mail::IMAPClient->new(Socket => $handle->{fh},) ;
+        }
+        else {
+                $imap = Mail::IMAPClient->new() ;
+        }
+        
 
         # Well, it does not change anything, does it?
         # It does when suppressing the hack with *STDERR
         $imap->Debug_fh( $mysync->{ tee } || *STDOUT ) ;
 
-        if ( $ssl ) { set_ssl( $imap, $acc ) }
+        # if ( $ssl ) { set_ssl( $imap, $acc ) }
         if ( $tls ) {  } # can not do set_tls() here because connect() will directly do a STARTTLS
         $imap->Clear( 1 ) ;
         $imap->Server( $host ) ;
@@ -20939,6 +20951,8 @@ sub get_options_from_string
         'debugsleep=f'  => \$mysync->{ debugsleep },
         'errorsmax=i'   => \$mysync->{ errorsmax },
         'folder=s@'     => \$mysync->{ folder  },
+        'proxy1=s@'     => \$mysync->{ acc1 }->{ proxy },
+        'proxy2=s@'     => \$mysync->{ acc2 }->{ proxy },
         'timeout=f'     => \$mysync->{ timeout },
         'timeout1=f'    => \$mysync->{ acc1 }->{ timeout },
         'timeout2=f'    => \$mysync->{ acc2 }->{ timeout },
