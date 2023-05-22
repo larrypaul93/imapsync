@@ -8539,7 +8539,7 @@ sub init_imap
                 };
                 my $handle = $http->_open_handle($request, "https", $host, $port, $host) or  errors_incr( $mysync, "Proxy connection failed" ) ;;
                 myprint( "connected to proxy: $acc->{proxy} for $host:$port\n" );
-                $imap = Mail::IMAPClient->new(RawSocket => $handle->{fh},) ;
+                $imap = Mail::IMAPClient->new(Socket => $handle->{fh},) ;
 
         }
         else {
