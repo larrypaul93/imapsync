@@ -7615,10 +7615,16 @@ sub reconnect_12_if_needed
 {
         my $mysync = shift @ARG ;
 	#return 2 ;
-	if ( ! reconnect_if_needed( $mysync->{imap1}, $mysync->{acc1} ) ) {
+	if ( ! reconnect_if_needed( 
+                $mysync->{imap1}, 
+                $mysync->{acc1} 
+                ) ) {
 		return ;
 	}
-	if ( ! reconnect_if_needed( $mysync->{imap2},  $mysync->{acc2} ) ) {
+	if ( ! reconnect_if_needed( 
+                $mysync->{imap2},  
+                $mysync->{acc2} 
+        ) ) {
 		return ;
 	}
 	# both were good
@@ -7647,10 +7653,10 @@ sub tests_reconnect_if_needed
 	return ;
 }
 
-sub reconnect {
-        my $self = shift;
-        my ($imap, $acc) = @_ ;
-        # my $acc = shift @ARG ;
+sub imap_proxy_reconnect {
+
+        my $imap = shift @ARG ;
+        my $acc = shift @ARG ;
 
         if ( $imap->IsAuthenticated ) {
                 $imap->_debug("reconnect called but already authenticated");
@@ -7696,18 +7702,18 @@ sub reconnect_if_needed
 {
 	# return undef upon failure.
 	# return 1 upon connection success, with or without reconnection.
-        my $self = shift;
-        my ($imap, $acc) = @_ ;
-        # my $acc = shift @ARG ;
+
+        my $imap = shift @ARG ;
+        my $acc = shift @ARG ;
 
 	if ( ! defined $imap ) { return ; }
 
-	if ( ! $imap->Server(  ) && !$acc->{proxy} ) { return ; }
+	if ( ! $imap->Server(  ) && ! $acc->{proxy} ) { return ; }
 
 	if ( $imap->IsUnconnected(  ) ) {
 		$imap->{IMAPSYNC_RECONNECT_COUNT} += 1 ;
                 if($acc->{proxy}){
-                        if ( $self->reconnect( $imap, $acc) )  {
+                        if ( imap_proxy_reconnect( $imap, $acc) )  {
 			return 1 ;
 		        }
                 }
@@ -7724,7 +7730,7 @@ sub reconnect_if_needed
 	# A last forced one
 	$imap->State( Mail::IMAPClient::Unconnected ) ;
         if($acc->{proxy}){
-	       $self->reconnect( $imap, $acc) ;
+	       imap_proxy_reconnect( $imap, $acc) ;
         }
         else {
               $imap->reconnect(  ) ;  
