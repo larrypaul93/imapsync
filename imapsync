@@ -7532,7 +7532,10 @@ sub catch_reconnect
                 myprint( "Info: reconnecting to host1 imap server $mysync->{host1}\n" ) ;
                 $mysync->{imap1}->State( Mail::IMAPClient::Unconnected ) ;
                 $mysync->{imap1}->{IMAPSYNC_RECONNECT_COUNT} += 1 ;
-                if ( $mysync->{imap1}->reconnect(  ) )
+                if($mysync->{acc1}->{proxy} && imap_proxy_reconnect($mysync->{imap1}, $mysync->{acc1})){
+                        myprint( "Info: reconnected to host1 imap server $mysync->{host1}\n" ) ;
+                }
+                else if ( $mysync->{imap1}->reconnect(  ) )
                 {
                         myprint( "Info: reconnected to host1 imap server $mysync->{host1}\n" ) ;
                 }
@@ -7544,7 +7547,10 @@ sub catch_reconnect
                 myprint( "Info: reconnecting to host2 imap server\n" ) ;
                 $mysync->{imap2}->State( Mail::IMAPClient::Unconnected ) ;
                 $mysync->{imap2}->{IMAPSYNC_RECONNECT_COUNT} += 1 ;
-                if ( $mysync->{imap2}->reconnect(  ) )
+                if($mysync->{acc2}->{proxy} && imap_proxy_reconnect($mysync->{imap2}, $mysync->{acc2})){
+                        myprint( "Info: reconnected to host2 imap server $mysync->{host2}\n" ) ;
+                }
+                else if ( $mysync->{imap2}->reconnect(  ) )
                 {
                         myprint( "Info: reconnected to host2 imap server $mysync->{host2}\n" ) ;
                 }
