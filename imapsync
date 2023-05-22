@@ -7649,8 +7649,8 @@ sub tests_reconnect_if_needed
 
 sub reconnect {
         my $self = shift;
-        my $imap = shift @ARG ;
-        my $acc = shift @ARG ;
+        my ($imap, $acc) = @_ ;
+        # my $acc = shift @ARG ;
 
         if ( $imap->IsAuthenticated ) {
                 $imap->_debug("reconnect called but already authenticated");
@@ -7697,8 +7697,8 @@ sub reconnect_if_needed
 	# return undef upon failure.
 	# return 1 upon connection success, with or without reconnection.
         my $self = shift;
-        my $imap = shift @ARG ;
-        my $acc = shift @ARG ;
+        my ($imap, $acc) = @_ ;
+        # my $acc = shift @ARG ;
 
 	if ( ! defined $imap ) { return ; }
 
