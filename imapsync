@@ -8583,7 +8583,7 @@ sub init_imap
 
         if ( defined $acc->{ reconnectretry } )
         {
-                $imap->Reconnectretry( $acc->{ reconnectretry } ) ;
+                # $imap->Reconnectretry( $acc->{ reconnectretry } ) ;
         }
         
         $imap->{IMAPSYNC_RECONNECT_COUNT} = 0 ;
