@@ -1022,9 +1022,6 @@ use Regexp::Common ;
 use Text::ParseWords ; # for quotewords()
 use File::Tail ;
 use HTTP::Tiny;
-# use LWP::UserAgent ;
-# use IO::Socket::SSL;
-use IO::Socket::Socks::Wrapper 'wrap_connection';
 
 
 local $OUTPUT_AUTOFLUSH = 1 ;
@@ -8528,7 +8525,8 @@ sub init_imap
         if($acc->{proxy}){
                 myprint( "connecting to proxy: $acc->{proxy} for $host:$port\n" );
                 my $http = HTTP::Tiny->new( 
-                        https_proxy => $acc->{proxy}
+                        https_proxy => $acc->{proxy},
+                        timeout => $acc->{ timeout }
                 );
                 my $request = {
                         method    => "get",
@@ -8540,8 +8538,8 @@ sub init_imap
                         headers   => {},
                 };
                 my $handle = $http->_open_handle($request, "https", $host, $port, $host) or  errors_incr( $mysync, "Proxy connection failed" ) ;;
-                myprint( "connecting to proxy: $acc->{proxy} for $host:$port\n" );
-                $imap = Mail::IMAPClient->new(Socket => $handle->{fh},) ;
+                myprint( "connected to proxy: $acc->{proxy} for $host:$port\n" );
+                $imap = Mail::IMAPClient->new(RawSocket => $handle->{fh},) ;
 
         }
         else {
@@ -8583,7 +8581,7 @@ sub init_imap
 
         if ( defined $acc->{ reconnectretry } )
         {
-                # $imap->Reconnectretry( $acc->{ reconnectretry } ) ;
+                $imap->Reconnectretry( $acc->{ reconnectretry } ) ;
         }
         
         $imap->{IMAPSYNC_RECONNECT_COUNT} = 0 ;
@@ -22013,4 +22011,3 @@ sub template
         
         return ;
 }
-
