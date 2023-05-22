@@ -7679,8 +7679,8 @@ sub reconnect {
                         https_proxy => $acc->{proxy},
                         timeout => $acc->{ timeout }
         );
-        my $handle = $http->_open_handle($acc->{proxy_request}, "https", $acc->{proxy_request}->{host}, $acc->{proxy_request}->{port}, $acc->{proxy_request}->{host}) or  errors_incr( $mysync, "Proxy connection failed" ) ;;
-        $acc->{proxyHandle} = $handle->{fh}
+        my $handle = $http->_open_handle($acc->{proxy_request}, "https", $acc->{proxy_request}->{host}, $acc->{proxy_request}->{port}, $acc->{proxy_request}->{host}) ;
+        $acc->{proxyHandle} = $handle->{fh};
         if ( $imap->Socket($acc->{proxyHandle}) ) {
                 $ret = 1;
                 if ( defined $imap->Folder ) {
@@ -7696,7 +7696,7 @@ sub reconnect_if_needed
 {
 	# return undef upon failure.
 	# return 1 upon connection success, with or without reconnection.
-        my self = shift;
+        my $self = shift;
         my $imap = shift @ARG ;
         my $acc = shift @ARG ;
 
